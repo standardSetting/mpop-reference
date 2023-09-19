@@ -58,7 +58,7 @@
 
       html += '</tr>'
 
-      for (let n = 1; n <= 512; n++) {
+      for (let n = 1; n <= 511; n++) {
         const binaryStr = n.toString(2).padStart(9, '0')
         html += `<tr><td>${n}</td><td>${binaryStr}</td>`
 
