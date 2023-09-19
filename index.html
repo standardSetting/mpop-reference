@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MPop9 Table</title>
+  <style>
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    table {
+      border-collapse: collapse;
+      border: 3px solid #591F56;
+      width: 100%;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #591F56;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    h1 {
+      color: #591F56;
+      text-align: center;
+    }
+    div {
+      overflow: auto;
+      height: 80vh;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="overflow: hidden;">
+    <h1>MPop9 Table</h1>
+    <div id="tableContainer"></div>
+  </div>
+
+  <script>
+    function generateTable() {
+      let html = '<table>'
+      html += '<tr><th colspan="11">Sampling group to mpop conversion</th></tr>'
+      html += '<tr><th colspan="2">Sampling groups</th><th colspan="9">Populations (mpop1 is the least-significant bit of sampling group in base 2)</th></tr>'
+      html += '<tr><th>Base 10</th><th>Base 2</th>'
+      
+      for (let i = 1; i <= 9; i++) {
+        html += `<th>mpop${i}</th>`
+      }
+
+      html += '</tr>'
+
+      for (let n = 1; n <= 512; n++) {
+        const binaryStr = n.toString(2).padStart(9, '0')
+        html += `<tr><td>${n}</td><td>${binaryStr}</td>`
+
+        for (let i = 0; i < 9; i++) {
+          const mpopValue = binaryStr[8 - i]
+          html += `<td>${mpopValue}</td>`
+        }
+
+        html += '</tr>'
+      }
+
+      html += '</table>'
+      return html
+    }
+
+    // Add the table to the specific div in the HTML document
+    document.getElementById('tableContainer').innerHTML = generateTable()
+  </script>
+
+</body>
+</html>
