@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MPop9 Table</title>
+  <title>Sampling group to mpop converter</title>
   <style>
     body {
       background-color: #f9f9f9;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       height: 100vh;
       margin: 0;
@@ -15,7 +15,6 @@
     table {
       border-collapse: collapse;
       border: 3px solid #591F56;
-      width: 100%;
     }
     th, td {
       padding: 8px;
@@ -26,30 +25,56 @@
       color: white;
       position: sticky;
       top: 0;
-      z-index: 1;
     }
     h1 {
       color: #591F56;
+    }
+    div#tableContainer {
+      overflow: auto;
+      height: 60vh;
+      width: 100%;
+      margin-top: 20px;
+    }
+    div#converter {
+      margin: 20px;
       text-align: center;
     }
-    div {
-      overflow: auto;
-      height: 80vh;
+    input.mpopInput {
+      width: 30px;
+      display: block;
+    }
+    div.mpopField {
+      display: inline-block;
+      margin-right: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <div style="overflow: hidden;">
-    <h1>MPop9 Table</h1>
-    <div id="tableContainer"></div>
+  <h1>Sampling group to mpop converter</h1>
+  
+  <div id="converter">
+    <h3>Converter</h3>
+    Base 10: <input type="number" id="base10Input">
+    <button onclick="toMpop()">To Mpop</button><br>
+    
+    <div style="display: flex; direction: flex-row; margin-top: 10px;">
+      <div id="mpopInputs"></div>
+      <button onclick="toBase10()">To Base 10</button>
+    </div>
+
+  </div>
+
+  <div style="display: flex; justify-content: center;">
+    <div id="tableContainer"></div>    
   </div>
 
   <script>
     function generateTable() {
       let html = '<table>'
       html += '<tr><th colspan="11">Sampling group to mpop conversion</th></tr>'
-      html += '<tr><th colspan="2">Sampling groups</th><th colspan="9">Populations (mpop1 is the least-significant bit of sampling group in base 2)</th></tr>'
+      html += '<tr><th colspan="2">Sampling groups</th><th colspan="9">Populations (mpop1 is the least-significant bit of sampling group in base 2, and so on)</th></tr>'
       html += '<tr><th>Base 10</th><th>Base 2</th>'
       
       for (let i = 1; i <= 9; i++) {
@@ -74,7 +99,48 @@
       return html
     }
 
-    // Add the table to the specific div in the HTML document
+    for (let i = 1; i <= 9; i++) {
+      const div = document.createElement('div')
+      div.className = 'mpopField'
+
+      const label = document.createElement('label')
+      label.innerHTML = `mpop${i}`
+      label.for = `mpop${i}Input`
+
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.className = 'mpopInput'
+      input.id = `mpop${i}Input`
+      input.maxLength = 1
+
+      div.appendChild(label)
+      div.appendChild(input)
+      document.getElementById('mpopInputs').appendChild(div)
+    }
+
+    function toMpop() {
+      const base10 = parseInt(document.getElementById('base10Input').value)
+      const binaryStr = base10.toString(2).padStart(9, '0')
+      for (let i = 1; i <= 9; i++) {
+        document.getElementById(`mpop${i}Input`).value = binaryStr[9 - i]
+      }
+    }
+
+    function toBase10() {
+      let binaryStr = ''
+      for (let i = 9; i >= 1; i--) {
+        let mpopValue = document.getElementById(`mpop${i}Input`).value
+        mpopValue = mpopValue || '0'  // Assume 0 for empty fields
+        if (mpopValue !== '0' && mpopValue !== '1') {
+          alert('Invalid mpop values')
+          return
+        }
+        binaryStr += mpopValue
+      }
+      const base10 = parseInt(binaryStr, 2)
+      document.getElementById('base10Input').value = base10
+    }
+
     document.getElementById('tableContainer').innerHTML = generateTable()
   </script>
 
